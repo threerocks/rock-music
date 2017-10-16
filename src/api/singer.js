@@ -1,0 +1,10 @@
+import {host, ERR_OK} from './config'
+import axios from 'axios'
+
+export function getSingers() {
+  const url = `${host}/top/artists?offset=0&limit=100`;
+
+  return axios.get(url).then((res) => {
+    return Promise.resolve(res.data)
+  });
+}

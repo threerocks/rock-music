@@ -1,8 +1,10 @@
 <template>
-  <div id="app">
+  <div id="app" class="app">
     <m-header></m-header>
     <tab></tab>
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -19,4 +21,8 @@
 
 <style>
   @import 'common/css/base.css';
+  .app {
+    width: 100%;
+    overflow: hidden;
+  }
 </style>
