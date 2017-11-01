@@ -4,6 +4,7 @@
   --color-background: #222;
   --color-background-d: rgba(0, 0, 0, 0.3);
   --color-highlight-background: #333;
+  --color-highlight-background-l: rgba(51, 51, 51, .8);
   --color-dialog-background: #666;
   --color-theme: #ffcd32;
   --color-theme-d: rgba(255, 205, 49, 0.5);

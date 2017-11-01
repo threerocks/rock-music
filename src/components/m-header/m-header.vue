@@ -6,15 +6,15 @@
 </template>
 
 <script>
-export default {
-  
-}
+  export default {
+
+  }
 </script>
 
-<style>
+<style scoped>
 
   .m-header {
-    --header-height: 8vh;
+    --header-height: 6vh;
     width: 100vw;
     height: var(--header-height);
     display: flex;
@@ -30,6 +30,7 @@ export default {
   .text {
     margin-left: 2vw;
     color: var(--color-theme);
-    font-size: 4vh;
+    font-size: 3vh;
+    font-weight: 400;
   }
 </style>

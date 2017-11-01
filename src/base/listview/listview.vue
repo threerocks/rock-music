@@ -9,7 +9,7 @@
       <li v-for="group in data" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="item in group.items">
+          <li @click="selectItem(item)" class="list-group-item" v-for="item in group.items">
             <img class="singer-avatar" v-lazy="item.pic">
             <span class="singer-name">{{item.name}}</span>
           </li>
@@ -84,6 +84,9 @@
       Loading,
     },
     methods: {
+      selectItem(item) {
+        this.$emit('select', item);
+      },
       onShortcutTouchStart(e) {
         let anchorIndex = getData(e.target, 'index');
         let firstTouch = e.touches[0];
@@ -101,6 +104,9 @@
       },
       scroll(pos) {
         this.scrollY = pos.y;
+      },
+      refresh() {
+        this.$refs.listview.refresh();
       },
       _calculateHeight() {
         this.listHeight = [];
@@ -153,11 +159,14 @@
     height: 100%;
     overflow: hidden;
   }
+  .list-group {
+    padding-bottom: 3vh;
+  }
   .list-group-title {
-    height: 5vh;
-    line-height: 5vh;
-    padding-left: 4vw;
-    font-size: 4vw;
+    height: 4vh;
+    line-height: 4vh;
+    padding-left: 7vw;
+    font-size: 2.3vh;
     background: var(--color-highlight-background);
     color: var(--color-text-l);
   }
@@ -165,18 +174,18 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 2vh 0 1vw 4vw;
+    padding: 3vh 0 0 7vw;
   }
   .singer-avatar {
     border-radius: 50%;
-    width: 15vw;
-    height: 15vw;
+    width: 13vw;
+    height: 13vw;
     object-fit: cover;
   }
   .singer-name {
     margin-left: 5vw;
     color: var(--color-text-l);
-    font-size: 4.5vw;
+    font-size: 4vw;
   }
   .list-shortcut {
     position: absolute;
@@ -190,11 +199,11 @@
     list-style: none;
   }
   .list-shortcut-item {
-    padding: 3px;
+    padding: 0.5vh;
     line-height: 1;
     text-align: center;
     color: var(--color-text-l);
-    font-size: 2.5vh;
+    font-size: 2vh;
   }
   .current {
     color: var(--color-theme);
@@ -204,10 +213,10 @@
     position: absolute;
     top: 0;
     width: 100%;
-    height: 5vh;
-    line-height: 5vh;
-    padding-left: 4vw;
-    font-size: 4vw;
+    height: 4vh;
+    line-height: 4vh;
+    padding-left: 7vw;
+    font-size: 2.3vh;
     font-weight: bold;
     background: var(--color-highlight-background);
     color: var(--color-text-l);

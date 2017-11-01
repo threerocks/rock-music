@@ -10,7 +10,15 @@ export function getRecommend() {
 }
 
 export function getDiscList() {
-  const url = `${host}/personalized`;
+  const url = `${host}/top/playlist?limit=20&order=hot`;
+
+  return axios.get(url).then((res) => {
+    return Promise.resolve(res.data)
+  });
+}
+
+export function getPlaylistDetail(id) {
+  const url = `${host}/playlist/detail?id=${id}`;
 
   return axios.get(url).then((res) => {
     return Promise.resolve(res.data)

@@ -3,6 +3,7 @@ import App from './App'
 import router from './router'
 import fastclick from 'fastclick'
 import VueLazyload from 'vue-lazyload'
+import store from './store'
 
 Vue.use(VueLazyload, {
   loading: require('@/common/image/music.svg'),
@@ -15,5 +16,6 @@ fastclick.attach(document.body);
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 })

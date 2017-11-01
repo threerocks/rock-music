@@ -1,6 +1,7 @@
 <template>
-  <div class="singer">
-    <list-view :data="singers"></list-view>
+  <div class="singer" ref="singer">
+    <list-view @select="selectSinger" :data="singers" ref="list"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -10,11 +11,14 @@ import {getSingers} from '@/api/singer';
 import {getPinyin} from '@/api/pinyin';
 import Singer from '@/common/js/singer'
 import ListView from '@/base/listview/listview'
+import {mapGetters, mapMutations} from 'vuex'
+import {playlistMixin} from '@/common/js/mixin'
 
 const HOT_SINGER_LEN = 10;
 const HOT_NAME = '热门';
 
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       singers: [],
@@ -23,7 +27,24 @@ export default {
   created() {
     this._getSingers();
   },
+  computed: {
+    ...mapGetters([
+      'playlist'
+    ])
+  },
   methods: {
+    handlePlaylist() {
+      if (this.playlist.length > 0) {
+        this.$refs.singer.style.bottom = '10vh';
+        this.$refs.list.refresh()
+      }
+    },
+    selectSinger(singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`,
+      });
+      this.setSinger(singer);
+    },
     _getSingers() {
       getSingers().then((data) => {
         if (data.code === ERR_OK) {
@@ -88,6 +109,9 @@ export default {
         return Promise.resolve(hot.concat(ret));
       })
     },
+    ...mapMutations({
+      setSinger: 'SET_SINGER',
+    })
   },
   components: {
     ListView,
@@ -99,7 +123,7 @@ export default {
   .singer {
     position: fixed;
     width: 100%;
-    top: 14vh;
+    top: 11.5vh;
     bottom: 0;
   }
 </style>

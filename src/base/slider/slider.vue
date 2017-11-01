@@ -27,6 +27,10 @@
       interval: {
         type: Number,
         default: 3000,
+      },
+      initFlag: {
+        type: Boolean,
+        default: false,
       }
     },
     data() {
@@ -37,10 +41,7 @@
     },
     mounted() {
       setTimeout(() => {
-        this._setSliderWidth();
-        this._initDots();
-        this._initSlider();
-
+        this.init();
         if (this.autoPlay) {
           this._play();
         }
@@ -56,12 +57,16 @@
       clearTimeout(this.timer)
     },
     methods: {
+      init() {
+        this._setSliderWidth();
+        this._initDots();
+        this._initSlider();
+      },
       _setSliderWidth() {
         this.children = this.$refs.sliderGroup.children;
         let width = 0;
         const sliderWidth = this.$refs.slider.clientWidth;
         for (const child of this.children) {
-          // addClass(child, 'slider-item');
           child.style.width = sliderWidth + 'px'
           width += sliderWidth;
         }
@@ -109,7 +114,13 @@
           this.slider.goToPage(pageIndex, 0, 400);
         }, this.interval);
       },
-    }
+    },
+    watch: {
+      initFlag() {
+        this.init();
+        this.slider.refresh();
+      }
+    },
   }
 </script>
 
@@ -122,6 +133,7 @@
 }
 .slider-group {
   display: flex;
+  height: 100%;
 }
 .slider {
   position: relative;

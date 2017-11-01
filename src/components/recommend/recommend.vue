@@ -14,13 +14,13 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li @click="selectItem(item)" v-for="item in discList" class="item">
+            <li @click.prevent="selectItem(item)" v-for="item in discList" class="item">
               <div class="item-icon">
-                <img v-lazy="item.picUrl">
+                <img v-lazy="item.coverImgUrl">
               </div>
               <div class="item-text">
-                <h2 v-html="item.name"></h2>
-                <p v-html="item.copywriter"></p>
+                <h2>{{item.name }}</h2>
+                <p>{{ item.tags.join(' | ')}}</p>
               </div>
             </li>
           </ul>
@@ -30,6 +30,10 @@
         <loading></loading>
       </div>
     </scroll>
+    <!-- <div class="playlist" ref="playlist"> -->
+      <!-- <list-view @select="selectPlaylist" :data="playlist" ref="playlist"></list-view> -->
+      <router-view></router-view>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -39,19 +43,34 @@ import Scroll from '@/base/scroll/scroll'
 import Loading from '@/base/loading/loading'
 import {getRecommend, getDiscList} from '@/api/recommend.js'
 import {ERR_OK} from '@/api/config'
+import {playlistMixin} from '@/common/js/mixin'
+import {mapGetters, mapMutations} from 'vuex'
+import {createDisk} from '@/common/js/disk'
 
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       recommends: [],
       discList: [],
     }
   },
+  computed: {
+    ...mapGetters([
+      'playlist',
+    ])
+  },
   created() {
     this._getRecommend();
     this._getDiscList();
   },
   methods: {
+    handlePlaylist() {
+      if (this.playlist.length > 0) {
+        this.$refs.recommend.style.bottom = '10vh';
+        this.$refs.scroll.refresh();
+      }
+    },
     _getRecommend() {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
@@ -62,7 +81,7 @@ export default {
     _getDiscList() {
       getDiscList().then((res) => {
         if (res.code === ERR_OK) {
-          this.discList = res.result;
+          this.discList = res.playlists;
         }
       })
     },
@@ -73,8 +92,14 @@ export default {
       }
     },
     selectItem(item) {
-      
-    }
+      this.$router.push({
+        path: `/recommend/${item.id}`,
+      });
+      this.setDisk(createDisk(item));
+    },
+    ...mapMutations({
+      setDisk: 'SET_DISK',
+    }),
   },
   components: {
     Slider,
@@ -88,7 +113,7 @@ export default {
 .recommend {
   position: fixed;
   width: 100%;
-  top: 14vh;
+  top: 11.5vh;
   bottom: 0;
 }
 .recommend-content {
@@ -99,6 +124,7 @@ export default {
   font-size: 4vw;
   text-align: center;
   color: var(--color-theme);
+  padding-top: 2vh;
 }
 .loading-container {
   position: absolute;
@@ -127,18 +153,28 @@ export default {
 }
 .item-text {
   width: 76%;
-  height: 80%;
+  height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-start;
   font-size: 3vw;
 }
 .item-text h2 {
   color: var(--color-text);
   font-weight: 400;
+  font-size: 4vw;
+  width: 100%;
 }
 .item-text p {
+  width: 100%;
+  font-size: 4vw;
   color: var(--color-text-d);
+  text-overflow: -o-ellipsis-lastline;  
+  overflow: hidden;  
+  text-overflow: ellipsis;  
+  display: -webkit-box;  
+  -webkit-line-clamp: 2;  
+  -webkit-box-orient: vertical;
 }
 </style>

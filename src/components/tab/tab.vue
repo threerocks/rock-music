@@ -10,8 +10,8 @@
       <span class="tab-link">排行
       </span>
     </router-link>
-    <router-link tag="div" class="tab-item" to="/station">
-      <span class="tab-link">电台</span>
+    <router-link tag="div" class="tab-item" to="/search">
+      <span class="tab-link">搜索</span>
     </router-link>
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
   }
   .tab-item {
     color: var(--color-text-l);
-    font-size: 2.5vh;
+    font-size: 2.3vh;
     line-height: 1.5;
   }
   .router-link-active {
