@@ -2,7 +2,7 @@ import {host} from './config'
 import axios from 'axios'
 
 export const getSongDetail = function(id) {
-  const url = `${host}/detail?ids=${id}`;
+  const url = `${host}/song/detail?ids=${id}`;
 
   return axios.get(url).then((res) => {
     return Promise.resolve(res.data);

@@ -62,7 +62,7 @@
           if (res.code !== OK_CODE) return;
           this.hotkey = shuffle(res.data.hotkey).slice(0, 10);
         })
-      }
+      },
     },
     watch: {
       query(newQuery) {

@@ -82,7 +82,14 @@
         <img :src="musicList" class="mini-list">
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
+    <audio ref="audio" 
+            :src="currentSong.url"
+            @progress="progress"
+            @canplay="ready"
+            @error="error" 
+            @timeupdate="updateTime" 
+            @ended="end"
+    ></audio>
   </div>
 </template>
 
@@ -281,6 +288,9 @@
       },
       error() {
         this.songReady = true;
+      },
+      progress() {
+        console.log('process');
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale();

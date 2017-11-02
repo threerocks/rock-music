@@ -24,8 +24,10 @@
   import Scroll from '@/base/scroll/scroll'
   import Singer from '@/common/js/singer'
   import {createDisk} from '@/common/js/disk'
-  import {mapMutations} from 'vuex'
-  import {createSongForRank} from '@/common/js/song'
+  import {mapMutations, mapActions} from 'vuex'
+  import {createSong} from '@/common/js/song'
+  import {sequenceTasks} from '@/common/js/util'
+  import {getSongDetail, getSongUrl} from '@/api/song'
 
   export default {
     props: {
@@ -55,7 +57,22 @@
           });
         }
         if (type === 'songs') {
-          
+          function _getSongDetail() {
+            return getSongDetail(item.id).then((res) => {
+              if (res.code !== ERR_OK) throw new Error(res);
+              return createSong(res.songs[0]);
+            })
+          };
+          function _getSongUrl() {
+            return getSongUrl([item.id]).then((res) => {
+              if (res.code !== ERR_OK) throw new Error(res);
+              return res.data[0];
+            })
+          };
+          Promise.all([_getSongDetail(), _getSongUrl()]).then((res) => {
+            res[0].url = res[1].url;
+            this.insertSong(res[0]);
+          })
         }
         if (type === 'playlists') {
           this.setDisk(createDisk(item));
@@ -73,7 +90,8 @@
         const regExp = new RegExp(key, 'ig');
         const newStr = str.replace(regExp, `<span style="color: var(--color-theme);">${key}</span>`);
         if (type === 'songs') {
-          return `${index + 1}. ${newStr} - ${content.singer}`
+          const singer = content.singer ? ` - ${content.singer}` : '';
+          return `${index + 1}. ${newStr}${singer}`;
         }
         return `${index + 1}. ${newStr}`
       },
@@ -100,9 +118,9 @@
             });
           }
           if (key === 'songs') {
-            for (let i = 0; i < result[key].length; i++) {
-              result[key][i] = createSongForRank(result[key][i]);
-            }
+            // for (let i = 0; i < result[key].length; i++) {
+            //   result[key][i] = createSongForRank(result[key][i]);
+            // }
             list.push({
               type: key,
               data: result[key],
@@ -122,7 +140,9 @@
 
         return list;
       },
-      
+      ...mapActions([
+        'insertSong',
+      ])
     },
     watch: {
       query(newQuery) {
