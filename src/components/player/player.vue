@@ -88,7 +88,6 @@
             @error="error" 
             @timeupdate="updateTime" 
             @ended="end"
-            controls
     ></audio>
   </div>
 </template>
@@ -380,7 +379,7 @@
         let offsetWidth = 0;
         let opacity = 0;
         if (this.currentMiddlePage === 'cd') {
-          if (this.touch.precent > 0.3) {
+          if (this.touch.precent > 0.1) {
             offsetWidth = -window.innerWidth;
             opacity = 0;
             this.currentMiddlePage = 'lyric';
@@ -389,7 +388,7 @@
             opacity = 1;
           }
         } else {
-          if (this.touch.precent < 0.7) {
+          if (this.touch.precent < 0.9) {
             offsetWidth = 0;
             opacity = 1;
             this.currentMiddlePage = 'cd';
@@ -469,7 +468,7 @@
         this.timer = setTimeout(() => {
           this.$refs.audio.play();
           this.getLyric();
-        }, 1000);
+        }, 20);
       },
       playing(newPlaying) {
         if(this.isIOS) this.setPlaying(newPlaying);
