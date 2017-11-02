@@ -276,7 +276,7 @@
         }
       },
       ready() {
-        console.log('song ready')
+        console.log('networkState: ', this.$refs.audio.networkState);
         this.songReady = true;
       },
       error() {
@@ -374,24 +374,27 @@
         let offsetWidth = 0;
         let opacity = 0;
         if (this.currentMiddlePage === 'cd') {
-          if (this.touch.precent > 0.1) {
+          if (this.touch.precent > 0.3) {
             offsetWidth = -window.innerWidth;
             opacity = 0;
+            this.currentMiddlePage = 'lyric';
           } else {
             offsetWidth = 0;
             opacity = 1;
           }
         } else {
-          if (this.touch.precent < 0.9) {
-            offsetWidth = window.innerWidth;
-            opacity = 1;
-          } else {
+          if (this.touch.precent < 0.7) {
             offsetWidth = 0;
+            opacity = 1;
+            this.currentMiddlePage = 'cd';
+          } else {
+            offsetWidth = -window.innerWidth;
             opacity = 0;
           }
         }
         const time = 0.3;
-        this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`;
+
+        this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`;
         this.$refs.lyricList.$el.style.transition = `all ${time}s`;
         this.$refs.middleL.style.opacity = opacity;
         this.$refs.middleL.style.transition = `all ${time}s`;
@@ -462,9 +465,9 @@
       playing(newPlaying) {
         if(this.isIOS) this.setPlaying(newPlaying);
         const audio = this.$refs.audio;
-        this.$nextTick(() => {
+        setTimeout(() => {
           newPlaying ? audio.play() : audio.pause();
-        });
+        }, 20);
       },
       currentTime(newCurrentTime) {
         this.getPrecent(newCurrentTime);
