@@ -84,11 +84,11 @@
     </transition>
     <audio ref="audio" 
             :src="currentSong.url"
-            @progress="progress"
             @canplay="ready"
             @error="error" 
             @timeupdate="updateTime" 
             @ended="end"
+            controls
     ></audio>
   </div>
 </template>
@@ -283,14 +283,10 @@
         }
       },
       ready() {
-        console.log('networkState: ', this.$refs.audio.networkState);
         this.songReady = true;
       },
       error() {
         this.songReady = true;
-      },
-      progress() {
-        console.log('process');
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale();
@@ -461,13 +457,16 @@
         if (newSong.id === oldSong.id) return;
         if (this.currentLyric) {
           this.currentLyric.stop();
+          this.currentTime = 0
+          this.playingLyric = ''
+          this.currentLineNum = 0
         }
-        console.log(newSong.url)
         if(newSong.url === null) {
           this.songReady = true;
           return;
         }
-        setTimeout(() => {
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
           this.$refs.audio.play();
           this.getLyric();
         }, 1000);

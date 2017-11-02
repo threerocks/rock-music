@@ -30,7 +30,6 @@ export default {
     };
   },
   created() {
-    console.log('...')
     this._getDetail();
   },
   methods: {
