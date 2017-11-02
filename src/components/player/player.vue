@@ -448,6 +448,7 @@
         if (this.currentLyric) {
           this.currentLyric.stop();
         }
+        console.log(newSong.url)
         if(newSong.url === null) {
           this.songReady = true;
           return;
