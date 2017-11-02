@@ -466,6 +466,7 @@
         }
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
+          this.$refs.audio.load();
           this.$refs.audio.play();
           console.log(this.$refs.audio.paused, 'currentSong')
           this.getLyric();
@@ -476,7 +477,7 @@
         const audio = this.$refs.audio;
         this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause();
-          console.log(this.$refs.audio.paused, 'playing')
+          console.log(newPlaying, this.$refs.audio.paused, 'playing')
         });
       },
       currentTime(newCurrentTime) {
