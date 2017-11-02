@@ -80,7 +80,8 @@
         return require('@/common/image/music_play.svg');
       },
       ...mapGetters([
-        'playlist'
+        'playlist',
+        'firstPlay',
       ])
     },
     created() {
@@ -111,11 +112,13 @@
         this.selectPlay({
           list: this.songs, 
           index,
+          playingState: !this.firstPlay,
         });
       },
       random() {
         this.randomPlay({
           list: this.songs,
+          playingState: !this.firstPlay,
         });
       },
       ...mapActions([

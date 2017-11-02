@@ -8,23 +8,23 @@ function findIndex(list, song) {
   })
 }
 
-export const selectPlay = function({commit, state}, {list, index}) {
+export const selectPlay = function({commit, state}, {list, index, playingState}) {
   commit(types.SET_FULL_SCREEN, true);
   commit(types.SET_PLAYLIST, list);
   commit(types.SET_SEQUENCE_LIST, list);
   commit(types.SET_CURRENT_INDEX, index);
-  commit(types.SET_PLAYING_STATE, true);
+  commit(types.SET_PLAYING_STATE, playingState);
 }
 
-export const randomPlay = function({commit, state}, {list}) {
+export const randomPlay = function({commit, state}, {list, playingState}) {
   commit(types.SET_FULL_SCREEN, true);
   commit(types.SET_PLAYLIST, shuffle(list));
   commit(types.SET_SEQUENCE_LIST, list);
   commit(types.SET_CURRENT_INDEX, 0);
-  commit(types.SET_PLAYING_STATE, true);
+  commit(types.SET_PLAYING_STATE, playingState);
 }
 
-export const insertSong = function({commit, state}, song) {
+export const insertSong = function({commit, state}, song, playingState) {
   const playlist = [...state.playlist];
   const sequenceList = [...state.sequenceList];
   let currentIndex = state.currentIndex;
@@ -58,5 +58,5 @@ export const insertSong = function({commit, state}, song) {
   commit(types.SET_SEQUENCE_LIST, sequenceList);
   commit(types.SET_CURRENT_INDEX, currentIndex);
   commit(types.SET_FULL_SCREEN, true);
-  commit(types.SET_PLAYING_STATE, true);
+  commit(types.SET_PLAYING_STATE, playingState);
 }

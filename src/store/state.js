@@ -2,6 +2,7 @@ import {playMode} from '@/common/js/config'
 
 const state = {
   singer: {},
+  firstPlay: true,
   disk: {},
   rank: {},
   playing: false,

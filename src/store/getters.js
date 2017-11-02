@@ -1,5 +1,7 @@
 export const singer = state => state.singer;
 
+export const firstPlay = state => state.firstPlay;
+
 export const disk = state => state.disk;
 
 export const rank = state => state.rank;

@@ -24,7 +24,7 @@
   import Scroll from '@/base/scroll/scroll'
   import Singer from '@/common/js/singer'
   import {createDisk} from '@/common/js/disk'
-  import {mapMutations, mapActions} from 'vuex'
+  import {mapMutations, mapActions, mapGetters} from 'vuex'
   import {createSong} from '@/common/js/song'
   import {sequenceTasks} from '@/common/js/util'
   import {getSongDetail, getSongUrl} from '@/api/song'
@@ -43,6 +43,11 @@
     },
     created() {
       
+    },
+    computed: {
+      ...mapGetters([
+        'firstPlay'
+      ])
     },
     methods: {
       selectItem(type, item) {
@@ -71,7 +76,7 @@
           };
           Promise.all([_getSongDetail(), _getSongUrl()]).then((res) => {
             res[0].url = res[1].url;
-            this.insertSong(res[0]);
+            this.insertSong(res[0], !this.firstPlay);
           })
         }
         if (type === 'playlists') {

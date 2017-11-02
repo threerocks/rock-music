@@ -2,6 +2,8 @@ export const SET_SINGER = 'SET_SINGER';
 
 export const SET_DISK = 'SET_DISK';
 
+export const SET_FIRST_PLAY = 'SET_FIRST_PLAY';
+
 export const SET_RANK = 'SET_RANK';
 
 export const SET_PLAYING_STATE = 'SET_PLAYING_STATE';

@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-show="playlist.length > 0">
+  <div class="player" v-show="playlist.length > 0" @touchstart="playerTouchstart">
     <transition name="normal"
                 @enter="enter"
                 @after-enter="afterEnter"
@@ -131,6 +131,7 @@
     created() {
       this.isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
       this.touch = {};
+      this.canPlay = false;
     },
     mounted() {
 
@@ -169,10 +170,17 @@
         'sequenceList',
         'playlist',
         'playing',
-        'mode'
+        'mode',
+        'firstPlay'
       ]),
     },
     methods: {
+      playerTouchstart() {
+        if (this.$refs.audio && this.firstPlay) {
+          this.$refs.audio.play();
+          this.setFirstPlay(false);
+        }
+      },
       getPrecent(currentTime) {
         this.precent = currentTime / (this.currentSong.duration / 1000);
       },
@@ -446,6 +454,7 @@
         setSequenceList: 'SET_SEQUENCE_LIST',
         setPlaylist: 'SET_PLAYLIST',
         setPlayMode: 'SET_PLAY_MODE',
+        setFirstPlay: 'SET_FIRST_PLAY'
       })
     },
     watch: {
@@ -464,11 +473,11 @@
           this.songReady = true;
           return;
         }
-        clearTimeout(this.timer)
+        clearTimeout(this.timer);
         this.timer = setTimeout(() => {
-          this.$refs.audio.load();
-          this.$refs.audio.play();
-          console.log(this.$refs.audio.paused, 'currentSong')
+          if (!this.firstPlay) {
+            this.$refs.audio.play();
+          }
           this.getLyric();
         }, 20);
       },
@@ -477,11 +486,19 @@
         const audio = this.$refs.audio;
         this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause();
-          console.log(newPlaying, this.$refs.audio.paused, 'playing')
         });
       },
       currentTime(newCurrentTime) {
         this.getPrecent(newCurrentTime);
+      },
+      firstPlay(newFirstPlay) {
+        if(newFirstPlay) {
+          this.$refs.audio.pause();
+          this.currentLyric.stop();
+        } else {
+          this.$refs.audio.play();
+          this.currentLyric.play();
+        }
       }
     },
     components: {
