@@ -276,6 +276,7 @@
         }
       },
       ready() {
+        console.log('song ready')
         this.songReady = true;
       },
       error() {
