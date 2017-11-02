@@ -466,6 +466,7 @@
         }
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
+          console.log(this.$refs.audio)
           this.$refs.audio.play();
           this.getLyric();
         }, 20);
