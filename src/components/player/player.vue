@@ -466,7 +466,6 @@
         }
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
-          console.log(this.$refs.audio)
           this.$refs.audio.play();
           this.getLyric();
         }, 20);
@@ -474,9 +473,9 @@
       playing(newPlaying) {
         if(this.isIOS) this.setPlaying(newPlaying);
         const audio = this.$refs.audio;
-        setTimeout(() => {
+        this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause();
-        }, 20);
+        });
       },
       currentTime(newCurrentTime) {
         this.getPrecent(newCurrentTime);
