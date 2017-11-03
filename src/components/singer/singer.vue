@@ -8,7 +8,6 @@
 <script>
 import {ERR_OK} from '@/api/config';
 import {getSingers} from '@/api/singer';
-import {getPinyin} from '@/api/pinyin';
 import Singer from '@/common/js/singer'
 import ListView from '@/base/listview/listview'
 import {mapGetters, mapMutations} from 'vuex'
@@ -62,52 +61,42 @@ export default {
         }
       };
       const singerList = [];
-      const promiseList = [];
       list.map((item, index) => {
-        promiseList.push(getPinyin(item.name).then((data) => {
-          let fIndex = ''
-          if(data && data[0] && data[0][0] && data[0][0] !== '') {
-            fIndex = data[0][0].split('')[0].toUpperCase();
-            const singer = new Singer({
-              name: item.name,
-              id: item.id,
-              index: fIndex,
-              pic: item.picUrl,
-            });
-            singerList.push(singer);
-            if (index < HOT_SINGER_LEN) {
-              map.hot.items.push(singer);
-            }
-          }
-        }));
-      });
-
-      return Promise.all(promiseList).then((data) => {
-        singerList.map((item, index) => {
-          const key = item.index;
-          if (!map[key]) {
-            map[key] = {
-              title: key,
-              items: [],
-            }
-          }
-          map[key].items.push(item);
+        const singer = new Singer({
+          name: item.name,
+          id: item.id,
+          index: item.fIndex,
+          pic: item.picUrl,
         });
-        const ret = [];
-        const hot = [];
-        for (const key of Object.keys(map)) {
-          const val = map[key];
-          if (val.title === HOT_NAME) {
-            hot.push(val);
-          } else {
-            ret.push(val);
+        singerList.push(singer);
+        if (index < HOT_SINGER_LEN) {
+          map.hot.items.push(singer);
+        }
+      });
+      singerList.map((item, index) => {
+        const key = item.index;
+        if (!map[key]) {
+          map[key] = {
+            title: key,
+            items: [],
           }
         }
-        ret.sort((a, b) => {
-          return a.title.charCodeAt(0) - b.title.charCodeAt(0);
-        });
-        return Promise.resolve(hot.concat(ret));
-      })
+        map[key].items.push(item);
+      });
+      const ret = [];
+      const hot = [];
+      for (const key of Object.keys(map)) {
+        const val = map[key];
+        if (val.title === HOT_NAME) {
+          hot.push(val);
+        } else {
+          ret.push(val);
+        }
+      }
+      ret.sort((a, b) => {
+        return a.title.charCodeAt(0) - b.title.charCodeAt(0);
+      });
+      return Promise.resolve(hot.concat(ret));
     },
     ...mapMutations({
       setSinger: 'SET_SINGER',

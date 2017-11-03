@@ -1,11 +1,11 @@
 <template>
-  <div id="app" class="app" @touchmove.prevent>
+  <div id="app" class="app" @touchmove.prevent @touchstart="touchstart">
     <m-header></m-header>
     <tab></tab>
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
-    <player></player>
+    <player ref="player"></player>
   </div>
 </template>
 
@@ -15,6 +15,11 @@
   import Player from '@/components/player/player'
 
   export default {
+    methods: {
+      touchstart(e) {
+        this.$refs.player.paly();
+      },
+    },
     components: {
       MHeader,
       Tab,

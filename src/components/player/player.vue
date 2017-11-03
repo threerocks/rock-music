@@ -181,6 +181,9 @@
           this.setFirstPlay(false);
         }
       },
+      play() {
+        this.$refs.audio.play();
+      },
       getPrecent(currentTime) {
         this.precent = currentTime / (this.currentSong.duration / 1000);
       },
@@ -486,6 +489,7 @@
         const audio = this.$refs.audio;
         this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause();
+          this.currentLyric.togglePlay()
         });
       },
       currentTime(newCurrentTime) {
