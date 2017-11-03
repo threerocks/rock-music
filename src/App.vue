@@ -5,7 +5,7 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
-    <player ref="player"></player>
+    <player></player>
   </div>
 </template>
 
@@ -15,11 +15,6 @@
   import Player from '@/components/player/player'
 
   export default {
-    methods: {
-      touchstart(e) {
-        this.$refs.player.paly();
-      },
-    },
     components: {
       MHeader,
       Tab,
