@@ -274,13 +274,13 @@
         this.setCurrentIndex(index);
       },
       togglePlaying(e) {
-        if(!this.songReady) return;
-        if(e) {
-          this.clickTransition(e.target);
-        }
         if (this.$refs.audio && this.firstPlay) {
           this.$refs.audio.play();
           this.setFirstPlay(false);
+        }
+        if(!this.songReady && !this.firstPlay) return;
+        if(e) {
+          this.clickTransition(e.target);
         }
         this.setPlayingState(!this.playing);
       },
