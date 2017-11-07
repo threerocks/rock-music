@@ -1,4 +1,5 @@
 import {playMode} from '@/common/js/config'
+import {getSearch, getMarked} from '@/common/js/cache'
 
 const state = {
   singer: {},
@@ -11,6 +12,8 @@ const state = {
   sequenceList: [],
   mode: playMode.sequence,
   currentIndex: -1,
+  searchHistory: getSearch(),
+  markedList: getMarked(),
 }
 
 export default state

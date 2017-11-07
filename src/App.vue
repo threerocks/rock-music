@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app" @touchmove.prevent @touchstart="touchstart">
+  <div id="app" class="app" @touchmove.prevent>
     <m-header></m-header>
     <tab></tab>
     <keep-alive>

@@ -12,7 +12,17 @@
       </ul>
     </div>
     <div class="search-result" ref="searchResult" v-show="query">
-      <suggest ref="suggest" :query="query" class="suggest-item"></suggest>
+      <suggest ref="suggest" @search="search" :query="query" class="suggest-item"></suggest>
+    </div>
+    <div class="history">
+      <div class="history-title">
+        <h2>搜索历史</h2><img class="delete-icon" :src="iconDelete" @click.stop="clearHistory">
+      </div>
+      <ul class="key-wrapper" v-show="searchHistory.length">
+        <li @click="selectHistory(history)" class="history-item" v-for="(history, index) in searchHistory">
+          <span class="history-text">{{history}}</span><img @click.stop="deleteHistoryItem(index)" :src="iconRemove">
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -24,7 +34,8 @@
   import {shuffle} from '@/common/js/util'
   import Suggest from '@/components/suggest/suggest'
   import {playlistMixin} from '@/common/js/mixin'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+  import {saveSearch} from '@/common/js/cache'
 
   const OK_CODE = 0;
   export default {
@@ -39,8 +50,15 @@
       this._getHotkey();
     },
     computed: {
+      iconDelete() {
+        return require('@/common/image/delete.svg');
+      },
+      iconRemove() {
+        return require('@/common/image/remove.svg');
+      },
       ...mapGetters([
-        'playlist'
+        'playlist',
+        'searchHistory'
       ])
     },
     methods: {
@@ -51,18 +69,35 @@
           this.$refs.suggest.refresh();
         }
       },
+      search() {
+        this.saveSearchHistory(this.query);
+      },
       onQueryChange(query) {
         this.query = query;
       },
       selectHotkey(key) {
         this.$refs.searchBox.setQuery(key.k);
       },
+      selectHistory(history) {
+        this.$refs.searchBox.setQuery(history);
+      },
+      deleteHistoryItem(index) {
+        this.deleteSearchHistory(index);
+      },
+      clearHistory() {
+        this.clearSearchHistory();
+      },
       _getHotkey() {
         getHotkey().then((res) => {
           if (res.code !== OK_CODE) return;
-          this.hotkey = shuffle(res.data.hotkey).slice(0, 10);
+          this.hotkey = shuffle(res.data.hotkey).slice(0, 6);
         })
       },
+      ...mapActions([
+        'saveSearchHistory',
+        'deleteSearchHistory',
+        'clearSearchHistory',
+      ])
     },
     watch: {
       query(newQuery) {
@@ -91,7 +126,7 @@
   .search-box {
     width: 90%;
   }
-  .hotkey {
+  .history, .hotkey {
     width: 100%;
     display: flex;
     flex-flow: column nowrap;
@@ -115,6 +150,7 @@
   .key-wrapper {
     width: 90%;
     margin: 2vh 0;
+    list-style: none;
   }
   .search-result {
     position: absolute;
@@ -125,5 +161,39 @@
   .suggest-item {
     width: 100%;
     height: 100%;
+  }
+  .delete-icon {
+    height: 100%;
+  }
+  .history {
+    margin-top: 3vh;
+  }
+  .history-title {
+    width: 90%;
+    height: 3vh;
+    color: var(--color-text-l);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .history-title h2 {
+    font-size: 2.2vh;
+  }
+  .history-item {
+    font-size: 2.2vh;
+    height: 3vh;
+    padding: 1vh 0;
+    border-radius: 10px;
+    margin: 2vw 0 2vw;
+    color: var(--color-text-l);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .history-item img {
+    height: 3vh;
+  }
+  .history-text {
+
   }
 </style>

@@ -59,10 +59,6 @@
         type: Boolean,
         default: false,
       },
-      songs: {
-        type: Array,
-        default: [],
-      },
     },
     data() {
       return {

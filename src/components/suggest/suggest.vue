@@ -85,6 +85,7 @@
             path: `/recommend/${item.id}`,
           });
         }
+        this.$emit('search');
       },
       refresh() {
         this.$refs.suggestWrapper.refresh();

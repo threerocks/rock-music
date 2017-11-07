@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-show="playlist.length > 0" @touchstart="playerTouchstart">
+  <div class="player" v-show="playlist.length > 0">
     <transition name="normal"
                 @enter="enter"
                 @after-enter="afterEnter"
@@ -62,7 +62,7 @@
               <img :src="playIcon">
             </div>
             <img :src="nextIcon" @click="next">
-            <img :src="store" class="store">
+            <img :src="storeIcon" class="store" @click="store">
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@
         <progress-circle :radius="radius" :precent="precent">
           <img :src="playIcon" class="mini-play-icon" @click.stop="togglePlaying">
         </progress-circle>
-        <img :src="musicList" class="mini-list">
+        <img :src="musicList" class="mini-list" @click.stop="clickPlayerList">
       </div>
     </transition>
     <audio ref="audio" 
@@ -89,11 +89,12 @@
             @timeupdate="updateTime" 
             @ended="end"
     ></audio>
+    <player-list class="player-list" :playlist="playlist" ref="playerList"></player-list>
   </div>
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import animations from 'create-keyframe-animation'
   import {prefixStyle, whichTransitionEvent, addClass, rmClass} from '@/common/js/dom'
   import {playMode} from '@/common/js/config'
@@ -106,6 +107,7 @@
   import {ERR_OK} from '@/api/config'
   import Scroll from '@/base/scroll/scroll'
   import Slider from '@/base/slider/slider'
+  import PlayerList from '@/components/player-list/player-list'
 
   const transform = prefixStyle('transform');
   const animationPlayState = prefixStyle('animationPlayState');
@@ -154,8 +156,8 @@
       previousIcon() {
         return require('@/common/image/music_previous.svg')
       },
-      store() {
-        return require('@/common/image/star.svg')
+      storeIcon() {
+        return this.markedList.includes(this.currentSong.id + '') ? require('@/common/image/star.png') : require('@/common/image/star.svg')
       },
       musicList() {
         return require('@/common/image/song_list.svg')
@@ -171,15 +173,19 @@
         'playlist',
         'playing',
         'mode',
-        'firstPlay'
+        'firstPlay',
+        'markedList'
       ]),
     },
     methods: {
-      playerTouchstart() {
-        if (this.$refs.audio && this.firstPlay) {
-          this.$refs.audio.play();
-          this.setFirstPlay(false);
-        }
+      // playerTouchstart() {
+      //   if (this.$refs.audio && this.firstPlay) {
+      //     this.$refs.audio.play();
+      //     this.setFirstPlay(false);
+      //   }
+      // },
+      clickPlayerList() {
+        this.$refs.playerList.display();
       },
       getPrecent(currentTime) {
         this.precent = currentTime / (this.currentSong.duration / 1000);
@@ -195,28 +201,44 @@
       prev(e) {
         if(!this.songReady) return;
         this.clickTransition(e.target);
-        let index = this.currentIndex - 1;
-        if (index === -1) {
-          index = this.playlist.length - 1;
-        }
-        this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.togglePlaying();
+        if (this.playlist.length === 1) {
+          this.loop();
+          return;
+        } else {
+          let index = this.currentIndex - 1;
+          if (index === -1) {
+            index = this.playlist.length - 1;
+          }
+          this.setCurrentIndex(index);
+          if (!this.playing) {
+            this.togglePlaying();
+          }
         }
         this.songReady = false;
       },
       next(e) {
         if(!this.songReady) return;
         if (e) this.clickTransition(e.target);
-        let index = this.currentIndex + 1;
-        if (index === this.playlist.length) {
-          index = 0;
+        if (this.playlist.length === 1) {
+          this.loop();
+          return;
+        } else {
+          let index = this.currentIndex + 1;
+          if (index === this.playlist.length) {
+            index = 0;
+          }
+          this.setCurrentIndex(index);
+          if (!this.playing) {
+            this.togglePlaying();
+          }
         }
-        this.setCurrentIndex(index);
-        if (!this.playing) {
-          this.togglePlaying();
-        }
+
         this.songReady = false;
+      },
+      store(e) {
+        if (e) this.clickTransition(e.target);
+        if (this.markedList.includes(this.currentSong.id + '')) this.deleteMarkedList(this.currentSong);
+        else this.saveMarkedList(this.currentSong);
       },
       end() {
         if (this.mode === playMode.loop) {
@@ -255,6 +277,10 @@
         if(!this.songReady) return;
         if(e) {
           this.clickTransition(e.target);
+        }
+        if (this.$refs.audio && this.firstPlay) {
+          // this.$refs.audio.play();
+          this.setFirstPlay(false);
         }
         this.setPlayingState(!this.playing);
       },
@@ -342,7 +368,9 @@
         getLyric(this.currentSong.id).then((data) => {
           if (data.code !== ERR_OK) return;
           this.currentLyric = new Lyric(data.lrc.lyric, this.handleLyric);
-          this.currentLyric.play();
+          if (this.playing) {
+            this.currentLyric.play()
+          }
         }).catch(e => {
           this.currentLyric = null;
           this.playingLyric = '';
@@ -455,7 +483,11 @@
         setPlaylist: 'SET_PLAYLIST',
         setPlayMode: 'SET_PLAY_MODE',
         setFirstPlay: 'SET_FIRST_PLAY'
-      })
+      }),
+      ...mapActions([
+        'saveMarkedList',
+        'deleteMarkedList',
+      ]),
     },
     watch: {
       fullScreen() {
@@ -486,7 +518,7 @@
         const audio = this.$refs.audio;
         this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause();
-          this.currentLyric.togglePlay()
+          if(this.currentLyric) this.currentLyric.togglePlay();
         });
       },
       currentTime(newCurrentTime) {
@@ -495,10 +527,10 @@
       firstPlay(newFirstPlay) {
         if(newFirstPlay) {
           this.$refs.audio.pause();
-          this.currentLyric.stop();
+          if(this.currentLyric) this.currentLyric.stop();
         } else {
           this.$refs.audio.play();
-          this.currentLyric.play();
+          if(this.currentLyric) this.currentLyric.play();
         }
       }
     },
@@ -508,6 +540,7 @@
       ProgressCircle,
       Scroll,
       Slider,
+      PlayerList,
     }
   }
 </script>
@@ -801,6 +834,11 @@
   }
   .mini-list {
     height: 4vh;
+  }
+  .player-list {
+    position: fixed;
+    bottom: 0;
+    z-index: 200;
   }
 
   .normal-enter-active, .normal-leave-active {

@@ -6,13 +6,21 @@ export const getRankList = function() {
   const promises = [];
   for (const id of rankIds) {
     const url = `${host}/top/list?idx=${id}`;
-    promises.push(axios.get(url));
+    promises.push(axios.get(url).then((res) => {
+      // if (Object.prototype.toString.call(res.data) === '[object Object]') {
+      //   return res.data;
+      // } else {
+      //   return JSON.parse(res.data[id]);
+      // }
+      return JSON.parse(res.data[id]);
+    }));
   }
   return Promise.all(promises).then((resList) => {
+
     const rankList = [];
     for (const res of resList) {
-      if (res.status !== ERR_OK) Promise.reject(new Error(res.data));
-      rankList.push(createRank(res.data.result));
+      if (res && res.code !== ERR_OK) Promise.reject(new Error(res.data));
+      rankList.push(createRank(res.result));
     }
     return Promise.resolve(rankList);
   })

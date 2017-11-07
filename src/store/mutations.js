@@ -32,5 +32,11 @@ const mutations = {
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index;
   },
+  [types.SET_SEARCH_HISTORY](state, searchHistory) {
+    state.searchHistory = searchHistory;
+  },
+  [types.SET_MARKED_LIST](state, markedList) {
+    state.markedList = markedList;
+  },
 };
 export default mutations;
