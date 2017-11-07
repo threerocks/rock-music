@@ -7,12 +7,11 @@ export const getRankList = function() {
   for (const id of rankIds) {
     const url = `${host}/top/list?idx=${id}`;
     promises.push(axios.get(url).then((res) => {
-      // if (Object.prototype.toString.call(res.data) === '[object Object]') {
-      //   return res.data;
-      // } else {
-      //   return JSON.parse(res.data[id]);
-      // }
-      return JSON.parse(res.data[id]);
+      if (res.data && Object.prototype.toString.call(res.data.result) === '[object Object]') {
+        return res.data;
+      } else {
+        return JSON.parse(res.data[id]);
+      }
     }));
   }
   return Promise.all(promises).then((resList) => {
