@@ -15,7 +15,6 @@ export const getRankList = function() {
     }));
   }
   return Promise.all(promises).then((resList) => {
-
     const rankList = [];
     for (const res of resList) {
       if (res && res.code !== ERR_OK) Promise.reject(new Error(res.data));

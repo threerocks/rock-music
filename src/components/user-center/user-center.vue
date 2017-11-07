@@ -10,6 +10,7 @@
     <div class="middle">
       <div class="middle-wrapper">
         <div class="middle-left middle-trans" v-show="tab === 'marked'">
+          <div class="no-marked" v-if="!songList.length">你暂时没有收藏歌曲</div>
           <div class="random-play" v-show="songList.length" @click="random">
             <img class="random-icon-play" :src="bgPlay">
             <span class="random-text">随机播放全部</span>
@@ -333,7 +334,19 @@
     font-weight: 400;
     color: var(--color-text-l);
   }
-
+  .no-marked {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 50vw;
+    height: 50vh;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   @keyframes middle-tab {
     0% {opacity: 0}
     100% {opacity: 1}
