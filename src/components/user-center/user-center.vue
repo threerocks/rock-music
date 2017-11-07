@@ -22,7 +22,7 @@
                   <h1>{{song.name}}</h1>
                   <h2 v-text="songInfo(song)"></h2>
                 </div>
-                <img :src="store(song)" @click="storeItem(song)">
+                <img :src="store(song)" @click.stop="storeItem(song)">
               </li>
             </ul>
           </scroll>
@@ -152,6 +152,11 @@
         'selectPlay',
         'randomPlay',
       ])
+    },
+    watch: {
+      markedList() {
+        this.getSongList();
+      }
     },
     components: {
       Scroll,
