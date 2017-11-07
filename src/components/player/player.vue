@@ -275,6 +275,8 @@
       },
       togglePlaying(e) {
         if (this.$refs.audio && this.firstPlay) {
+          this.$refs.audio.play();
+          this.$refs.audio.pause();
           this.setFirstPlay(false);
         }
         if(!this.songReady && !this.firstPlay) return;
