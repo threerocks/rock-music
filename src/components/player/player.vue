@@ -279,7 +279,7 @@
           this.clickTransition(e.target);
         }
         if (this.$refs.audio && this.firstPlay) {
-          // this.$refs.audio.play();
+          this.$refs.audio.play();
           this.setFirstPlay(false);
         }
         this.setPlayingState(!this.playing);
