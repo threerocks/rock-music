@@ -547,10 +547,8 @@
 
 <style scoped>
   .player {
-    width: 100vw;
-    height: 100vh;
-  }
 
+  }
   .normal {
     width: 100%;
     height: 100%;
