@@ -276,7 +276,6 @@
       togglePlaying(e) {
         if (this.$refs.audio && this.firstPlay) {
           this.$refs.audio.play();
-          this.$refs.audio.pause();
           this.setFirstPlay(false);
         }
         if(!this.songReady && !this.firstPlay) return;
@@ -745,7 +744,7 @@
   .play {
     height: 7vh;
     width: 7vh;
-    border: 5px solid var(--color-theme);
+    border: 2px solid var(--color-theme);
     border-radius: 50%;
     display: flex;
     justify-content: space-around;
