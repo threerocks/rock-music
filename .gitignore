@@ -14,3 +14,4 @@ yarn-error.log*
 .vscode
 
 test.html
+test.js
